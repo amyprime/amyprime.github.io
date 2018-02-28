@@ -2,6 +2,7 @@
 <html>
   <head>
   <title>Fair Districts PA - Local Resolutions</title>
+  <!-- referrer is necessary for rawgit and google fusiontables cross origin requests -->
   <meta name="referrer" content="origin">
   <style>
     #map-canvas { width:1100px; height:650px; }
@@ -16,7 +17,7 @@
     <p id="current-count" class="hidden">To date,
         <span data-status="passed"></span> counties and municipalities across Pennsylvania have adopted
         a resolution in support of an independent citizens' redistricting commission.
-        <span data-status="inWork"></span> more are in progress.</p>
+        <span data-status="inWork,materialsSent"></span> more are in progress.</p>
     <p>Check out the map below to find out what's going on in your area.  If your municipality is
         already in progress, please <a href="https://www.fairdistrictspa.com/local-groups">contact
         your local group</a> to get involved.  Otherwise,
@@ -98,11 +99,22 @@
 
         addGoogleMaps();
 
-        var statuses = ['passed', 'inWork'];
+        // Combination of inWork and materialsSent corresponds to the yellow dots on the map.
+        var statuses = ['passed', 'inWork,materialsSent'];
         var countElIds = {
           fallbackCount: 'fall-back-count',
           currentCount: 'current-count'
         };
+
+        // We can't display status counts until all the following asynchronous
+        // requests are completed:
+        // 1. The window is loaded, so the DOM where we inject counts is present
+        // 2. The appropriate fusionApi ES5 JS is loaded
+        // 3. Counts for both status specs are fetched via fusionApi
+        //
+        // Furthermore, 3 depends upon 2 completing.
+
+        // Possibly asynchronous window load.
         var windowPromise =
           !!document.getElementById(countElIds.fallbackCount) ?
           Promise.resolve(true) :
@@ -110,11 +122,14 @@
             window.addEventListener('load', windowLoaded);
           });
 
+        // Asynchronous fusionApi script load
         new Promise(function(scriptAdded){
+          // See rawgit.com for an explanation of why two URLs are necessary here.
           addScript(isProduction() ?
-            'https://cdn.rawgit.com/RobinIsTheBird/fdpa-fusiontables/master/distribution/fusionApi_es5.js' :
-            'https://rawgit.com/RobinIsTheBird/fdpa-fusiontables/master/distribution/fusionApi_es5.js',
+            'https://cdn.rawgit.com/RobinIsTheBird/fdpa-fusiontables/combine-counts/distribution/fusionApi_es5.js' :
+            'https://rawgit.com/RobinIsTheBird/fdpa-fusiontables/combine-counts/distribution/fusionApi_es5.js',
             scriptAdded);
+        // Asynchronous requests for each count in statuses
         }).then(function(){
           var promisedCounts = statuses.map(function(statusSought) {
             return new Promise(function(gotCount){ // No error handler
@@ -127,11 +142,12 @@
             });
           });
           return [windowPromise].concat(promisedCounts);
+        // Join all outstanding asynchronous requests
         }).then(function(dfds){
           Promise.all(dfds).then(function(results){
-            injectCounts([
-                {resolution: 'passed', count: results[1]},
-                {resolution: 'inWork', count: results[2]}]);
+            injectCounts(statuses.map(function(statusSought, index){
+              return({resolution: statusSought, count: results[index + 1]});
+            }));
             revealCounts();
           });
         });
