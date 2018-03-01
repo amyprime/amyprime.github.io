@@ -126,8 +126,8 @@
         new Promise(function(scriptAdded){
           // See rawgit.com for an explanation of why two URLs are necessary here.
           addScript(isProduction() ?
-            'https://cdn.rawgit.com/RobinIsTheBird/fdpa-fusiontables/combine-counts/distribution/fusionApi_es5.js' :
-            'https://rawgit.com/RobinIsTheBird/fdpa-fusiontables/combine-counts/distribution/fusionApi_es5.js',
+            'https://cdn.rawgit.com/RobinIsTheBird/fdpa-fusiontables/master/distribution/fusionApi_es5.js' :
+            'https://rawgit.com/RobinIsTheBird/fdpa-fusiontables/master/distribution/fusionApi_es5.js',
             scriptAdded);
         // Asynchronous requests for each count in statuses
         }).then(function(){
