@@ -5,8 +5,8 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
     <meta name="referrer" content="origin">
     <title>Candidate Positions on Fair Districts</title> 
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBxdPyKNXkcFbFPs5I_e-xqGCUPGVuyabs"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxdPyKNXkcFbFPs5I_e-xqGCUPGVuyabs"></script>
     <script type="text/javascript">
       google.load('visualization', '1', {'packages':['corechart', 'table', 'geomap']});
 
@@ -66,7 +66,7 @@
           if (e && e.row && e.row["District"]) {
             var queryText = "SELECT 'District', 'Name', 'Party', 'Incumbent', 'Position' FROM "+candidateTableId+" WHERE 'District' = "+e.row["District"].value+";";
             var encodedQuery = encodeURIComponent(queryText);
-            var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq=' + encodedQuery);
+            var query = new google.visualization.Query('https://www.google.com/fusiontables/gvizdata?tq=' + encodedQuery);
             query.send(setInfoWindowContent);
             infoWindow.open(map);
             infoWindow.setPosition(e.latLng);
