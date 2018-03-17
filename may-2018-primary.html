@@ -1,0 +1,123 @@
+<!DOCTYPE html> 
+<html> 
+  <head> 
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" /> 
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
+    <meta name="referrer" content="origin">
+    <title>Candidate Positions on Fair Districts</title> 
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBxdPyKNXkcFbFPs5I_e-xqGCUPGVuyabs"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1', {'packages':['corechart', 'table', 'geomap']});
+
+      var infoWindow = new google.maps.InfoWindow();
+
+      function initialize() {
+        initializeMap('map_canvas_house', '1U6S-Vmr5U0d8QRpeKTVhxXbjtO59WVl5U_3UNsDG', '1gNAUgxRW-7VyFzd_wsZMRfx25DnOaxYVw39ADTBW');
+        initializeMap('map_canvas_senate', '1GzVZmg3PF7wbHlqkzrfU-GIfzydBEBc9qxkHMoU1', '1GN3Ac-zufIXDDi_OkF8l4J3BH7_L5cAj4mWcvQ3f');
+      }
+
+      // Based on http://www.geocodezip.com/v3_fusiontables_gviz_infowindows3.html
+      function initializeMap(divId, districtTableId, candidateTableId) {
+        var map = new google.maps.Map(document.getElementById(divId), {
+          center: new google.maps.LatLng(41, -77.5),
+          zoom: 7,
+          zoomControl: true,
+          zoomControlOptions: {
+            position: google.maps.ControlPosition.TOP_LEFT
+          },
+          fullscreenControl: true,
+          streetViewControl: false,
+          mapTypeControl: false
+        });
+
+        // GET DATA    
+        var layer = new google.maps.FusionTablesLayer({
+          query: {
+            select: 'Geometry',
+            from: districtTableId
+          },
+          suppressInfoWindows: true
+        });
+        layer.setOptions({
+          styles: [
+            {
+              polygonOptions: {
+                fillColor: "#80ff80",
+                strokeColor: "#808080",
+              }
+            },{
+              where: "'Election2018' = 'Yes'",
+              polygonOptions: {
+                fillOpacity: 0.2
+              }
+            },{
+              where: "'Election2018' = 'No'",
+              polygonOptions: {
+                fillOpacity: 0.01
+              }
+            }
+          ]
+        });
+
+        //SET MAP
+        layer.setMap(map);
+        google.maps.event.addListener(layer, "click", function(e) {
+          if (e && e.row && e.row["District"]) {
+            var queryText = "SELECT 'District', 'Name', 'Party', 'Incumbent', 'Position' FROM "+candidateTableId+" WHERE 'District' = "+e.row["District"].value+";";
+            var encodedQuery = encodeURIComponent(queryText);
+            var query = new google.visualization.Query('http://www.google.com/fusiontables/gvizdata?tq=' + encodedQuery);
+            query.send(setInfoWindowContent);
+            infoWindow.open(map);
+            infoWindow.setPosition(e.latLng);
+          } else {
+            alert("no row:"+e.latLng);
+          }
+        });
+      }
+
+      function setInfoWindowContent(response) {
+        if (!response) {
+          alert('Query did not return');
+          return;
+        }
+        if (response.isError()) {
+          alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+          return;
+        }
+
+        var contents = "District not up for election in 2018";
+
+        var dataTable = response.getDataTable();
+        var numRows = dataTable.getNumberOfRows();
+        if (numRows > 0) {
+          contents = "<strong>District "+dataTable.getValue(0,0)+"</strong>";
+          contents += "<table border='1'><tr><th>Name</th><th>Party</th><th>Incumbent</th><th>Position</th></tr>";
+          for(i = 0; i < numRows; i++) {
+            contents += "<tr><td>"+dataTable.getValue(i,1)+"</td><td>"+dataTable.getValue(i,2)+"</td><td>"+dataTable.getValue(i,3)+"</td><td>"+dataTable.getValue(i,4)+"</td></tr>";
+          }
+          contents += "</table>";
+        }
+
+        infoWindow.setContent(contents);
+      }
+    </script> 
+  </head> 
+
+  <body onload="initialize();">
+    <h1>Candidate Positions on Fair Districts</h1>
+    <p>Where do the candidates in your area stand on fair districts?
+      <a href="https://fairdistrictspa.com/">Fair Districts PA</a> is currently tracking
+      all legislative candidates in the May 2018 primary.  Click on a district in the maps
+      below to see the candidates and their positions.  You can also browse our complete
+      data sets: <a href="https://fusiontables.google.com/DataSource?docid=1gNAUgxRW-7VyFzd_wsZMRfx25DnOaxYVw39ADTBW#rows:id=1">House</a>, <a href="https://fusiontables.google.com/DataSource?docid=1GN3Ac-zufIXDDi_OkF8l4J3BH7_L5cAj4mWcvQ3f#rows:id=1">Senate</a></p>
+    <p>If you have more information about a candidate, please share with us by filling out
+      <a href="https://goo.gl/forms/J7ZDys4FBbzPSNbn2">this form</a>.</p>
+
+    <h2>Pennsylvania State House of Representatives</h2>
+    <div id="map_canvas_house" style="height:350px; width:575px;" class="map"></div>
+
+    <h2>Pennsylvania State Senate</h2>
+    <div id="map_canvas_senate" style="height:350px; width:575px;" class="map"></div>
+  </body> 
+</html> 
