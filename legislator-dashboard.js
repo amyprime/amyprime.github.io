@@ -1,3 +1,4 @@
+// TODO: Add parameters for table IDs etc.
 google.charts.load('current', {'packages':['table']});
 
 function populateDropdown() {
