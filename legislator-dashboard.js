@@ -1,12 +1,15 @@
 // TODO: Add parameters for table IDs etc.
-google.charts.load('current', {'packages':['table']});
-
-function populateDropdown() {
-  var query = new google.visualization.Query(
-    'https://docs.google.com/spreadsheets/d/1-nfLcspdj2h8rk07I7LQzUKG3oEV3r6tpjmL8p1hLrs/gviz/tq?' +
-    'range=A2:A254&headers=0');
-  query.send(populateDropdownSub);
-}
+google.charts.load(
+  'current',
+  {
+    'packages': ['table'],
+    'callback': function () {
+      var query = new google.visualization.Query(
+        'https://docs.google.com/spreadsheets/d/1-nfLcspdj2h8rk07I7LQzUKG3oEV3r6tpjmL8p1hLrs/gviz/tq?' +
+        'range=A2:A254&headers=0');
+      query.send(populateDropdownSub);
+    }
+  });
 
 function populateDropdownSub(response) {
   var dropdown = document.getElementById('legislator');
