@@ -46,7 +46,7 @@ function drawLegislator(chamber, district) {
   }
   var query = new google.visualization.Query('https://www.google.com/fusiontables/gvizdata?tq=');
   query.setQuery(
-    "SELECT 'Full Name', 'Party', 'Votes'" +
+    "SELECT 'Full Name', 'Party'" +
     " FROM " + tableId +
     " WHERE 'District'=" + district);
   query.send(drawLegislatorSub);
@@ -54,9 +54,8 @@ function drawLegislator(chamber, district) {
 
 function drawLegislatorSub(response) {
   var data = response.getDataTable();
-  var formatter = new google.visualization.NumberFormat({pattern: '##%'});
-  formatter.format(data, 2);
-
+  //var formatter = new google.visualization.NumberFormat({pattern: '##%'});
+  //formatter.format(data, 2);
   var table = new google.visualization.Table(document.getElementById('legislator_div'));	
   table.draw(data);
 }
