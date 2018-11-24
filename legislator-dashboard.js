@@ -75,13 +75,13 @@ function drawContactsSub(response) {
   var data = response.getDataTable();
   var nRows = data.getNumberOfRows();
   if (nRows == 0) {
-    document.getElementById('contacts_message').innerHTML = "This legislator hasn't been contacted yet!";
+    document.getElementById('contacts_message').innerHTML = "<br>This legislator hasn't been contacted yet!";
     document.getElementById('contacts_table').innerHTML = "";
   } else {
     if (nRows == 1) {
-      document.getElementById('contacts_message').innerHTML = "This legislator has been contacted once:";
+      document.getElementById('contacts_message').innerHTML = "<br>This legislator has been contacted once:";
     } else {
-      document.getElementById('contacts_message').innerHTML = "This legislator has been contacted " + nRows + " times:";
+      document.getElementById('contacts_message').innerHTML = "<br>This legislator has been contacted " + nRows + " times:";
     }
     var table = new google.visualization.Table(document.getElementById('contacts_table'));	
     table.draw(data);
