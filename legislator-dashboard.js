@@ -25,7 +25,11 @@ function initialize(response) {
 }
 
 function populateDropdown(filterText) {
-  filterText = filterText.toLowerCase();
+  if (/^\d+$/.test(filterText)) {
+    filterText = " " + filterText + ")";
+  } else {
+    filterText = filterText.toLowerCase();
+  }
 
   var dropdown = document.getElementById('legislator');
   while (dropdown.lastChild) {
