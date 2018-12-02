@@ -7,24 +7,39 @@ google.charts.load(
       var query = new google.visualization.Query(
         'https://docs.google.com/spreadsheets/d/1-nfLcspdj2h8rk07I7LQzUKG3oEV3r6tpjmL8p1hLrs/gviz/tq?' +
         'range=A2:A254&headers=0');
-      query.send(populateDropdownSub);
+      query.send(initialize);
     }
   });
 
-function populateDropdownSub(response) {
-  var dropdown = document.getElementById('legislator');
-  var datatable = response.getDataTable();
-  for (var i = 0; i < datatable.getNumberOfRows(); i++) {
+var legislators = [];
+
+function initialize(response) {
+  var dataTable = response.getDataTable();
+  for (var i = 0; i < dataTable.getNumberOfRows(); i++) {
     var option = document.createElement("option");
-    option.textContent = datatable.getValue(i, 0);
-    option.value = datatable.getValue(i, 0).replace(/.*\(/, "").replace(/\)/, "");
-    dropdown.appendChild(option);		
+    option.textContent = dataTable.getValue(i, 0);
+    option.value = dataTable.getValue(i, 0).replace(/.*\(/, "").replace(/\)/, "");
+	legislators.push(option);
   }
-		
-  limitSelections();
+  populateDropdown("");
 }
 
-function limitSelections() {
+function populateDropdown(filterText) {
+  filterText = filterText.toLowerCase();
+
+  var dropdown = document.getElementById('legislator');
+  while (dropdown.lastChild) {
+    dropdown.removeChild(dropdown.lastChild);
+  }
+  for (var i = 0; i < legislators.length; i++) {
+    if (legislators[i].textContent.toLowerCase().includes(filterText)) {
+      dropdown.appendChild(legislators[i]);
+	}
+  }
+  displayInfo();
+}
+
+function displayInfo() {
   var key = document.getElementById('legislator').value.split(" ");
   drawLegislator(key[0], key[1]);
   drawContacts(key[0], key[1]);
