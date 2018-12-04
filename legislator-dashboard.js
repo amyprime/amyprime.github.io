@@ -103,7 +103,7 @@ function drawLegislatorSub(response, title) {
     if (facebook) { content = content + "Facebook: <a href='https://www.facebook.com/" + facebook.substring(1) + "'>" + facebook + "</a><br>"; }
     if (twitter) { content = content + "Twitter: <a href='https://www.twitter.com/" + twitter.substring(1) + "'>" + twitter + "</a><br>"; }
   }
-  document.getElementById('legislator_div').innerHTML = content;
+  document.getElementById('legislator_div').innerHTML = "<br>" + content + "<br>";
 }
 	  
 function drawContacts(chamber, district) {
