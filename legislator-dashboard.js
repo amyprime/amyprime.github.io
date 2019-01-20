@@ -1,12 +1,14 @@
-// TODO: Add parameters for table IDs etc.
+var namesSheetId = '1-nfLcspdj2h8rk07I7LQzUKG3oEV3r6tpjmL8p1hLrs';
+var contactsTableId = '1Y1HHWA-g4m9wOKkK5aJcLeRIG-ECCgc2cj2EG5SU';
+var formId = '1FAIpQLSfcSPNmIBfEDph61K1-6IJpvN8ULEHb8uKLuQ5x0Y-EWLkseA';
+
 google.charts.load(
   'current',
   {
     'packages': ['table'],
     'callback': function () {
       var query = new google.visualization.Query(
-        'https://docs.google.com/spreadsheets/d/1-nfLcspdj2h8rk07I7LQzUKG3oEV3r6tpjmL8p1hLrs/gviz/tq?' +
-        'range=A2:A254&headers=0');
+        'https://docs.google.com/spreadsheets/d/' + namesSheetId + '/gviz/tq?range=A2:A254&headers=0');
       query.send(initialize);
     }
   });
@@ -93,7 +95,7 @@ function drawLegislatorSub(response, title) {
     var districtAddress1 = dataTable.getValue(0, 9);
 
     var content = "<strong>" + title + " " + lastName + " (" + party + ")</strong><br>";
-    if (freshman) { content = content + "<i>Newly elected; will take office Jan. 1st, 2019</i><br>"; }
+    if (freshman) { content = content + "<i>Newly elected; took office Jan. 1st, 2019</i><br>"; }
     content = content + "<br>";
     if (districtPhone) { content = content + "District Phone: <a href='tel:1" + districtPhone.replace(/[^\d]/g,"") + "'>" + districtPhone + "</a><br>"; }
     if (districtAddress1) { content = content + "District Address: " + districtAddress1 + "<br><br>"; }
@@ -110,7 +112,7 @@ function drawContacts(chamber, district) {
   var query = new google.visualization.Query('https://www.google.com/fusiontables/gvizdata?tq=');
   query.setQuery(
     "SELECT 'Date', 'Type', 'Position'" +
-    " FROM 1Y1HHWA-g4m9wOKkK5aJcLeRIG-ECCgc2cj2EG5SU" +
+    " FROM " + contactsTableId +
     " WHERE 'Chamber'='" + chamber + "' AND 'District'=" + district +
     " ORDER BY 'Date' DESC");
   query.send(drawContactsSub);
@@ -136,6 +138,6 @@ function drawContactsSub(response) {
 function openPrefilledForm() {
   var elt = document.getElementById('legislator');
   var text = elt.options[elt.selectedIndex].text.replace(/ /g, "+");
-  window.open('https://docs.google.com/forms/d/e/1FAIpQLSfcSPNmIBfEDph61K1-6IJpvN8ULEHb8uKLuQ5x0Y-EWLkseA/viewform?usp=pp_url&entry.221054303='+text);
+  window.open('https://docs.google.com/forms/d/e/' + formId + '/viewform?usp=pp_url&entry.221054303='+text);
   return false;
 }
