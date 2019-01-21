@@ -54,27 +54,30 @@ function displayInfo() {
 function drawLegislator(chamber, district) {
   var tableId;
   var title;
+  var bill;
   switch (chamber) {
     case 'Senate':
       tableId = '1_QM0a4pAFRAO_5_TfO1-Rhs3n1Qm5mLGfsDhW-RC';
 	  title = "Senator";
+	  bill = "SB 22";
       break;
     case 'House':
       tableId = '1EvdE9QCu0cJsOKKqI0nsQja5_GzKuxoQ8l8u7q71';
 	  title = "Representative";
+	  bill = "Original HB 722";
       break;
     default:
       throw new "Chamber must be 'Senate' or 'House', not '" + chamber + "'.";
   }
   var query = new google.visualization.Query('https://www.google.com/fusiontables/gvizdata?tq=');
   query.setQuery(
-    "SELECT 'Last Name', 'Party', 'Freshman', 'District Phone', 'Capitol Phone', 'Email', 'Facebook', 'Twitter', 'Capitol Address', 'District Address 1'" +
+    "SELECT 'Last Name', 'Party', 'First Elected', 'Votes', 'Leadership', 'State Govt Committee', '" + bill + "', 'District Phone', 'Capitol Phone', 'Email', 'Facebook', 'Twitter', 'Capitol Address', 'District Address 1'" +
     " FROM " + tableId +
     " WHERE 'District'=" + district);
-  query.send(function (response) { drawLegislatorSub(response, title) });
+  query.send(function (response) { drawLegislatorSub(response, title, bill) });
 }
 
-function drawLegislatorSub(response, title) {
+function drawLegislatorSub(response, title, bill) {
   var dataTable = response.getDataTable();
   var content;
   if (dataTable.getNumberOfRows() != 1)
@@ -83,18 +86,30 @@ function drawLegislatorSub(response, title) {
   } else {
     var lastName = dataTable.getValue(0, 0);
     var party = dataTable.getValue(0, 1);
-    var freshman = dataTable.getValue(0, 2) == "Yes";
-    var districtPhone = dataTable.getValue(0, 3);
-    var capitolPhone = dataTable.getValue(0, 4);
-    var email = dataTable.getValue(0, 5);
-    var facebook = dataTable.getValue(0, 6);
-    var twitter = dataTable.getValue(0, 7);
-    var capitolAddress = dataTable.getValue(0, 8);
-    var districtAddress1 = dataTable.getValue(0, 9);
+    var firstElected = dataTable.getValue(0, 2);
+    var votes = dataTable.getValue(0, 3) * 100;
+    var leadership = dataTable.getValue(0, 4);
+    var stateGovt = dataTable.getValue(0, 5) == "Yes";
+	var cosponsor = dataTable.getValue(0, 6);
+    var districtPhone = dataTable.getValue(0, 7);
+    var capitolPhone = dataTable.getValue(0, 8);
+    var email = dataTable.getValue(0, 9);
+    var facebook = dataTable.getValue(0, 10);
+    var twitter = dataTable.getValue(0, 11);
+    var capitolAddress = dataTable.getValue(0, 12);
+    var districtAddress1 = dataTable.getValue(0, 13);
 
     var content = "<strong>" + title + " " + lastName + " (" + party + ")</strong><br>";
-    if (freshman) { content = content + "<i>Newly elected; took office Jan. 1st, 2019</i><br>"; }
-    content = content + "<br>";
+	if (firstElected == 2018) {
+      content = content + "<i>First elected in " + firstElected + " with " + votes.toFixed(2) + "% of the vote</i><br>";
+    } else {
+      content = content + "<i>First elected in " + firstElected + ", most recently with " + votes.toFixed(2) + "% of the vote</i><br>";
+    }
+	content = content + "<br>";
+	if (cosponsor != "N/A") { content = content + "<strong>" + cosponsor + "</strong> of " + bill + " in the 2017-2018 session<br>"; }
+	if (leadership) { content = content + leadership + "<br>"; }
+	if (stateGovt) { content = content + "Member of the State Government Committee<br>"; }
+	content = content + "<br>";
     if (districtPhone) { content = content + "District Phone: <a href='tel:1" + districtPhone.replace(/[^\d]/g,"") + "'>" + districtPhone + "</a><br>"; }
     if (districtAddress1) { content = content + "District Address: " + districtAddress1 + "<br><br>"; }
     if (capitolPhone) { content = content + "Capitol Phone: <a href='tel:1" + capitolPhone.replace(/[^\d]/g,"") + "'>" + capitolPhone + "</a><br>"; }
