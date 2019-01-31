@@ -46,7 +46,7 @@ function populateDropdown(filterText) {
 function displayInfo() {
   var key = document.getElementById('legislator').value.split(" ");
   drawLegislator(key[0], key[1]);
-  drawContacts(key[0], key[1]);
+  //drawContacts(key[0], key[1]);
   return false;
 }
 	  
