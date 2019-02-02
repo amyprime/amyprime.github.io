@@ -89,7 +89,7 @@ function drawLegislatorSub(response, title, bill) {
     var firstElected = dataTable.getValue(0, 2);
     var votes = dataTable.getValue(0, 3) * 100;
     var leadership = dataTable.getValue(0, 4);
-    var stateGovt = dataTable.getValue(0, 5) !== "No";
+    var stateGovt = dataTable.getValue(0, 5);
     var cosponsor = dataTable.getValue(0, 6);
     var districtPhone = dataTable.getValue(0, 7);
     var capitolPhone = dataTable.getValue(0, 8);
@@ -108,7 +108,7 @@ function drawLegislatorSub(response, title, bill) {
 	content = content + "<br>";
 	if (cosponsor != "N/A") { content = content + "<strong>" + cosponsor + "</strong> of " + bill + " in the 2017-2018 session<br>"; }
 	if (leadership) { content = content + leadership + "<br>"; }
-	if (stateGovt) { content = content + "Member of the State Government Committee<br>"; }
+	if (stateGovt) { content = content + stateGovt + " of the State Government Committee<br>"; }
 	content = content + "<br>";
     if (districtPhone) { content = content + "District Phone: <a href='tel:1" + districtPhone.replace(/[^\d]/g,"") + "'>" + districtPhone + "</a><br>"; }
     if (districtAddress1) { content = content + "District Address: " + districtAddress1 + "<br><br>"; }
