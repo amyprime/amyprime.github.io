@@ -89,8 +89,8 @@ function drawLegislatorSub(response, title, bill) {
     var firstElected = dataTable.getValue(0, 2);
     var votes = dataTable.getValue(0, 3) * 100;
     var leadership = dataTable.getValue(0, 4);
-    var stateGovt = dataTable.getValue(0, 5) == "Yes";
-	var cosponsor = dataTable.getValue(0, 6);
+    var stateGovt = dataTable.getValue(0, 5) !== "No";
+    var cosponsor = dataTable.getValue(0, 6);
     var districtPhone = dataTable.getValue(0, 7);
     var capitolPhone = dataTable.getValue(0, 8);
     var email = dataTable.getValue(0, 9);
